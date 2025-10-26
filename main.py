@@ -33,9 +33,15 @@ def health():
 def build_background(size: Tuple[int, int], theme: str):
     width, height = size
     theme = (theme or "light").lower()
+
+    # Defaults
+    color1 = (250, 250, 250)
+    color2 = (240, 240, 245)
+    text_color = (17, 24, 39)
+
     if theme == "dark":
-        color1 = (18, 18, 22)
-        color2 = (32, 32, 38)
+        color1 = (11, 12, 16)
+        color2 = (18, 19, 24)
         text_color = (245, 245, 245)
     elif theme == "blue":
         color1 = (219, 234, 254)
@@ -45,10 +51,27 @@ def build_background(size: Tuple[int, int], theme: str):
         color1 = (250, 245, 255)
         color2 = (236, 233, 255)
         text_color = (24, 24, 27)
-    else:
-        color1 = (250, 250, 250)
-        color2 = (240, 240, 245)
-        text_color = (17, 24, 39)
+    elif theme == "purple":
+        color1 = (238, 233, 255)
+        color2 = (221, 214, 254)
+        text_color = (30, 27, 75)
+    elif theme == "emerald":
+        color1 = (209, 250, 229)
+        color2 = (167, 243, 208)
+        text_color = (6, 78, 59)
+    elif theme == "rose":
+        color1 = (255, 228, 230)
+        color2 = (254, 205, 211)
+        text_color = (76, 5, 25)
+    elif theme == "slate":
+        color1 = (248, 250, 252)
+        color2 = (226, 232, 240)
+        text_color = (15, 23, 42)
+    elif theme == "cyber":
+        # Dark futuristic with neon text
+        color1 = (10, 10, 16)
+        color2 = (20, 14, 40)
+        text_color = (218, 70, 239)  # neon fuchsia for contrast
 
     bg = Image.new("RGB", (width, height), color1)
     top = Image.new("RGB", (width, height // 2), color1)
@@ -88,7 +111,7 @@ async def process_image(
         # Text extraction via threshold mask (no external OCR deps):
         # Works best for dark text on light slips; keeps layout by using pixel mask
         gray = original.convert("L")
-        # Auto threshold using Otsu-like heuristic via histogram midpoint
+        # Auto threshold using histogram percentile heuristic
         hist = gray.histogram()
         total = sum(hist)
         cumsum = 0
